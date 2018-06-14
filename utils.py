@@ -65,9 +65,8 @@ def make_pipeline(dimension_reduction="none"):
     # Vectorize, apply data compression with autoencoder and classify
     text_clf_autoenc = Pipeline(vectorizer + 
                              [('autoencoder', Autoencoder(n_features=2000,
-                                 n_epochs=50,
-                                 batch_size=100,
-                                 n_hidden=1500,
+                                 n_epochs=150,
+                                 batch_size=8,
                                  enc_dimension=1000))] +
                                  classifier)
 
