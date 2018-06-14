@@ -9,10 +9,10 @@ wiki_wiki = wikipediaapi.Wikipedia('en')
 
 class WikiDownloader:
     '''
-    Class to retrieve pages/articles from wikipedia
+    Class to retrieve pages/articles from wikipedia based on category
     '''
 
-    def progbar(self, curr, total, full_progbar):
+    def _progbar(self, curr, total, full_progbar):
         '''
         Display a progress bar
         :param curr: current number of items
@@ -23,7 +23,7 @@ class WikiDownloader:
         filled_progbar = round(frac * full_progbar)
         print('\r', 'o' * filled_progbar + '-' * (full_progbar - filled_progbar), '[{:>7.2%}]'.format(frac), end='')
 
-    def get_category_pages(self, main_category, category, level=0, max_pages=10, max_level=1, page_ids=[], titles=[],
+    def _get_category_pages(self, main_category, category, level=0, max_pages=10, max_level=1, page_ids=[], titles=[],
                            texts=[]):
         '''
         Retrieve pages that are contained in a category, also recursively from the subcategories
@@ -60,12 +60,12 @@ class WikiDownloader:
                     page_ids.append(categorymember_page.pageid)
                     titles.append(categorymember_page.title)
                     texts.append(categorymember_page_text)
-                    self.progbar(len(page_ids), max_pages, 20)
+                    self._progbar(len(page_ids), max_pages, 20)
                     sys.stdout.flush()
 
             # namespace (ns) = 14 means category
             if categorymember.ns == 14 and level <= max_level and len(page_ids) < max_pages:
-                self.get_category_pages(main_category, categorymember.title, level + 1, max_pages=max_pages,
+                self._get_category_pages(main_category, categorymember.title, level + 1, max_pages=max_pages,
                                         page_ids=page_ids, titles=titles, texts=texts)
 
             if len(page_ids) >= max_pages:
@@ -102,7 +102,7 @@ class WikiDownloader:
             print("Getting %s" % category)
             # try downloading the category pages (timeouts can happen)
             try:
-                cat_page_id, cat_page_title, cat_page_text, cat_page_cat = self.get_category_pages(category, category,
+                cat_page_id, cat_page_title, cat_page_text, cat_page_cat = self._get_category_pages(category, category,
                                                                                             max_pages=max_pages,
                                                                                             page_ids=[], titles=[],
                                                                                             texts=[])
